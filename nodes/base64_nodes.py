@@ -104,7 +104,7 @@ class Base64EncodeNode:
             quality: Quality for lossy formats (1-100)
 
         Returns:
-            Tuple containing base64 encoded string (PNG format by default)
+            Dictionary with 'ui' containing the base64 string for API access
         """
         # Handle batch dimension - take first image
         if image.dim() == 4:
@@ -128,7 +128,13 @@ class Base64EncodeNode:
         # Encode to base64
         base64_string = encode_image_to_base64(pil_image, format=format, quality=quality)
 
-        return (base64_string,)
+        # For OUTPUT_NODE=True, return dict with 'ui' for API access
+        return {
+            "ui": {
+                "image_base64": [base64_string]
+            },
+            "result": (base64_string,)
+        }
 
     @classmethod
     def IS_CHANGED(cls, image, format, quality, **kwargs):
