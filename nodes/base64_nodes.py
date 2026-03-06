@@ -1,6 +1,7 @@
 import torch
 import numpy as np
-from ..utils.image_utils import decode_base64_to_image
+from PIL import Image
+from ..utils.image_utils import decode_base64_to_image, encode_image_to_base64
 
 
 class Base64DecodeNode:
@@ -17,7 +18,8 @@ class Base64DecodeNode:
     FUNCTION = "decode"
     OUTPUT_NODE = False
 
-    def INPUT_TYPES(s):
+    @classmethod
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "base64_string": ("STRING", {
@@ -74,7 +76,8 @@ class Base64EncodeNode:
     FUNCTION = "encode"
     OUTPUT_NODE = True
 
-    def INPUT_TYPES(s):
+    @classmethod
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "image": ("IMAGE",),
@@ -103,8 +106,6 @@ class Base64EncodeNode:
         Returns:
             Tuple containing base64 encoded string (PNG format by default)
         """
-        from ..utils.image_utils import encode_image_to_base64
-
         # Handle batch dimension - take first image
         if image.dim() == 4:
             image = image[0]
